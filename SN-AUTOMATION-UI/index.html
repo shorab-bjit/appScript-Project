@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top" />
+  </head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -60%);
+      background-color: #fff;
+      max-width: 700px;
+      min-width: 450px;
+      height: 180px;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      background: #ffefba; /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right, #ffffff, #ffefba); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right, #ffffff, #ffefba); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+
+    .itemStt {
+      text-decoration: none;
+      padding: 10px 15px;
+      background: green;
+      color: #ffff;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .itemStt:hover {
+      opacity: 0.85;
+    }
+
+    .itemTtt {
+      text-decoration: none;
+      padding: 10px 15px;
+      background: deepskyblue;
+      color: #ffff;
+      border-radius: 5px;
+    }
+
+    .itemTtt:hover {
+      opacity: 0.85;
+    }
+  </style>
+
+  <body>
+    <div class="container">
+      <a class="itemStt" target="_blank" href="https://script.google.com/macros/s/AKfycbz97H0PmI0YC0kZRp6ilnb8ofo61tRMvW4s_6Jsm9AOEdWH4dKKQGnxyVfirJbd2fgv-w/exec">Upload STT Input File</a>
+
+      <a class="itemTtt" target="_blank" href="https://script.google.com/macros/s/AKfycbwgPAdZe5MSgblxGkGh12USIG8hVsPVNwyqkDJgMJ3DF12SCP8nORC6uZSjBbQvZHjXnw/exec">Upload TTT Input File</a>
+    </div>
+  </body>
+</html>

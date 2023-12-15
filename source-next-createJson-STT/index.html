@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top" />
+  </head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .warning-banner {
+      display: none;
+    }
+
+    .container {
+      position: relative;
+      left: 50%;
+      top: 50%;
+      overflow: hidden;
+      transform: translate(-50%, -60%);
+      background-color: #fff;
+      max-width: 700px;
+      min-width: 450px;
+      height: 180px;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      background: #ffefba; /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right, #ffffff, #ffefba); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right, #ffffff, #ffefba); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+
+    .message {
+      font-size: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form {
+      text-align: center;
+    }
+
+    .custom-file-upload {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    input[type='file'] {
+      display: none;
+    }
+
+    input[type='button'] {
+      background-color: #2ecc71;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    input[type='button']:hover {
+      background-color: #27ae60;
+    }
+
+    .result {
+      background-color: #2ecc71;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .result > a {
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .result:hover {
+      background-color: #27ae60;
+    }
+
+    .loader {
+      display: none;
+      border: 5px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 5px solid #3498db;
+      margin-bottom: 5px;
+      width: 30px;
+      height: 30px;
+      -webkit-animation: spin 2s linear infinite; /* Safari */
+      animation: spin 1s linear infinite;
+    }
+
+    .process {
+      display: none;
+      padding: 5px;
+    }
+
+    /* dropdown */
+    .dropdown {
+      position: absolute;
+      left: 0;
+      top: -30%;
+      font-family: Arial, Helvetica, sans-serif;
+      text-align: center;
+      height: auto;
+    }
+
+    .dropdown h2 {
+      color: #fff;
+      font-size: 5vw;
+    }
+
+    .styled-select {
+      display: inline-block;
+      text-align: left;
+    }
+
+    #select {
+      border: 1px solid white;
+      padding: 10px 20px;
+      font-size: 15px;
+      color: #fff;
+      cursor: pointer;
+      background: #4f8eed url('caret-down.png') no-repeat 98% 50%;
+      background-size: auto;
+      text-align: center;
+      width: 150px;
+    }
+
+    .styled-select:hover #option {
+      display: block;
+    }
+
+    #option {
+      background: #000;
+      font-size: 15px;
+      padding: 0 1px;
+      color: #fff;
+      display: none;
+      position: absolute;
+      width: auto;
+    }
+
+    .item {
+      cursor: pointer;
+      padding: 10px 20px;
+      color: white;
+      text-decoration: none;
+      display: block;
+      width: 149px;
+    }
+    .item:hover {
+      background-color: #4f8eed;
+    }
+    /* dropdown */
+
+    /* back button */
+    .back-btn {
+      display: inline-block;
+      margin: 20px;
+      padding: 10px 15px;
+      text-decoration: none;
+      background-color: #3498db;
+      color: #fff;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .back-btn:hover {
+      background-color: #2980b9;
+    }
+
+    .back-btn i {
+      margin-right: 5px;
+    }
+    /* back button */
+
+    /* Safari */
+    @-webkit-keyframes spin {
+      0% {
+        -webkit-transform: rotate(0deg);
+      }
+      100% {
+        -webkit-transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+
+  <body>
+    <div class="container">
+      <div class="loader"></div>
+      <div class="process">Processing..</div>
+      <div class="message">Upload STT type Excel or Google Sheets File</div>
+      <div class="result"></div>
+
+      <div class="form">
+        <label for="upFile" class="custom-file-upload"> <span id="fileLabel">Choose File</span> </label>
+        <input id="upFile" name="upFile" type="file" accept=".xlsx" onchange="updateLabel()" />
+        <input type="button" onclick="handleSubmit()" value="Upload File" />
+      </div>
+    </div>
+
+    <script>
+      const loader = document.querySelector('.loader');
+      const process = document.querySelector('.process');
+      const message = document.querySelector('.message');
+      const result = document.querySelector('.result');
+
+      const myUpload = document.querySelector('input[name="upFile"]');
+      const myButton = document.querySelector('input[type="button"]');
+      const customUpload = document.querySelector('.custom-file-upload');
+      const fileLabel = document.getElementById('fileLabel'); // Added fileLabel element
+      var uploadFileName = '';
+
+      function handleSubmit(e) {
+        const file = myUpload.files[0];
+
+        if (file) {
+          myButton.disabled = true;
+          const fileType = file.type;
+
+          if (fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            const fileR = new FileReader();
+            fileR.onload = function (e) {
+              const vals = fileR.result.split(',');
+              const obj = {
+                fileName: file.name,
+                mimeType: fileType,
+                data: vals[1],
+              };
+              google.script.run.withSuccessHandler(myResult).uploadFile(obj);
+              myUpload.value = '';
+              uploadFileName = file.name.replace('.xlsx', '');
+            };
+
+            fileR.readAsDataURL(file);
+
+            message.textContent = 'File Submitted';
+
+            setTimeout(function () {
+              message.style.display = 'none';
+              myButton.style.display = 'none';
+              customUpload.style.display = 'none';
+              loader.style.display = 'block';
+              process.style.display = 'block';
+            }, 3000);
+          } else {
+            message.textContent = 'Please select a valid XLSX file.';
+            fileLabel.textContent = 'Choose File';
+            myUpload.value = '';
+            isRequestInProgress = false; // Reset flag
+            myButton.disabled = false;
+          }
+        } else {
+          message.textContent = 'No file selected.';
+          isRequestInProgress = false; // Reset flag
+          myButton.disabled = false;
+        }
+      }
+
+      function updateLabel() {
+        const fileInput = document.getElementById('upFile');
+        if (fileInput.files.length > 0) {
+          fileLabel.textContent = fileInput.files[0].name;
+        } else {
+          fileLabel.textContent = 'Choose File';
+        }
+      }
+
+      function myResult(val) {
+        google.script.run
+          .withSuccessHandler(function (fileInfo) {
+            if (fileInfo) {
+              // Handle the case where the result file is created successfully
+              message.style.display = 'block';
+              message.innerHTML = 'Result file created successfully.';
+
+              // Now call your main function
+              google.script.run.mainSTT(true, uploadFileName);
+
+              setTimeout(() => {
+                // Handle success
+                loader.style.display = 'none';
+                process.style.display = 'none';
+                message.style.display = 'block';
+                result.style.display = 'block';
+                message.innerHTML = `<a target="_blank" href="https://docs.google.com/spreadsheets/d/${fileInfo.fileId}/edit">STT RESULT OUTPUT FILE</a>`;
+                result.innerHTML = `<a target="_blank" style="padding: inherit;" href="https://docs.google.com/spreadsheets/d/${fileInfo.fileId}/edit">View Result</a>`;
+              }, [10000]);
+            } else {
+              // Handle the case where there is an error creating the result file
+              loader.style.display = 'none';
+              process.style.display = 'none';
+              message.style.display = 'block';
+              message.innerHTML = 'Error creating result file. Please upload Again a valid STT file!';
+            }
+          })
+          .withFailureHandler(function (error) {
+            loader.style.display = 'none';
+            process.style.display = 'none';
+            message.style.display = 'block';
+            // Handle the case where there is an error during the result file creation
+            message.innerHTML = 'Error creating result file. Please upload Again!';
+          })
+          .generateResultFile(uploadFileName);
+      }
+    </script>
+  </body>
+</html>
